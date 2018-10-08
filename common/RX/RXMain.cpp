@@ -143,7 +143,6 @@ namespace RX
 		m_bFullScreen  = false;
 		m_hMainWnd     = nullptr;
 		m_hInst        = nullptr;
-		m_wndProc      = DefaultWndProc;
 		m_routineState = ROUTINE_STATE::NORMAL;
 		m_msgCode      = 0;
 
@@ -195,7 +194,7 @@ namespace RX
 
 		wcex.cbSize        = sizeof(wcex);
 		wcex.style         = CS_HREDRAW | CS_VREDRAW;
-		wcex.lpfnWndProc   = m_wndProc;
+		wcex.lpfnWndProc   = DefaultWndProc;
 		wcex.cbClsExtra    = 0;
 		wcex.cbWndExtra    = 0;
 		wcex.hInstance     = m_hInst;

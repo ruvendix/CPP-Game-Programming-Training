@@ -15,5 +15,16 @@
 #define GLOBAL_VARIABLE_DEFINITION_H__
 
 
+// ====================================================================================
+// 전체 프로젝트가 공유하는 전역 상수입니다.
+extern HWND g_hMainWnd = nullptr;
+extern HDC  g_hMainDC  = nullptr;
+
+
+// ====================================================================================
+// 각 프로젝트별로 사용하는 전역 상수입니다.
+//
+// 001 프로젝트입니다.
+extern HBRUSH g_hHighlightBrush = nullptr;
 
 #endif

@@ -31,6 +31,7 @@ namespace RX
 		m_bMSAA       = false;
 		m_pD3D9       = nullptr;
 		m_pD3DDevice9 = nullptr;
+		m_clearColor  = DXCOLOR_BLACK;
 		m_dwBehavior  = 0;
 	}
 
@@ -445,7 +446,7 @@ namespace RX
 
 	HRESULT RXMain_DX9::BeginRender()
 	{
-		m_pD3DDevice9->Clear(0, nullptr, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, DXCOLOR_BLACK, 1.0f, 0);
+		m_pD3DDevice9->Clear(0, nullptr, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, m_clearColor, 1.0f, 0);
 		m_pD3DDevice9->BeginScene();
 		return S_OK;
 	}

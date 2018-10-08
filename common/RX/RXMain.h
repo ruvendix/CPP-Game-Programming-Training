@@ -36,7 +36,7 @@ namespace RX
 		virtual void    ToggleFullScreenMode(bool bFullScreen = false);
 
 		void ChangeProgramTitle(const TCHAR* szTitle);
-
+		
 		// ====================================================================================
 		// getter
 		ROUTINE_STATE getRoutineState() const noexcept
@@ -63,7 +63,7 @@ namespace RX
 		// setter
 		void setWndProc(WNDPROC wndProc)
 		{
-			m_wndProc = wndProc;
+			::SetWindowLongPtr(m_hMainWnd, GWLP_WNDPROC, reinterpret_cast<LONG>(wndProc));
 		}
 
 		void setSubFunc(SubFunc func, SUBFUNC_TYPE type)
@@ -82,7 +82,6 @@ namespace RX
 		bool             m_bFullScreen;
 		HWND             m_hMainWnd;
 		HINSTANCE        m_hInst;
-		WNDPROC          m_wndProc;
 		ROUTINE_STATE    m_routineState;
 		INT32            m_msgCode;
 		SubFuncInfo      m_subFunc[SubFuncInfo::MAX_SUBFUNC];

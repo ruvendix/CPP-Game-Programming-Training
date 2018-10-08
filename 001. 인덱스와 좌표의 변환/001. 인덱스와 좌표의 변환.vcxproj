@@ -126,11 +126,13 @@
     <ClCompile Include="..\common\base_project.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="source\game\game_board.cpp" />
     <ClCompile Include="source\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\common\base_project.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="source\game\game_board.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="001. 인덱스와 좌표의 변환.rc" />

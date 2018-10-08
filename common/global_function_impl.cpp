@@ -291,6 +291,12 @@ namespace RX
 		__debugbreak();
 	}
 
+	DLL_DEFINE void DrawLineWin32(HDC hDC, INT32 startX, INT32 startY, INT32 endX, INT32 endY)
+	{
+		::MoveToEx(hDC, startX, startY, nullptr);
+		::LineTo(hDC, endX, endY);
+	}
+
 	DLL_DEFINE void Win32LastErrorHandlerImplW(PROJECT_MODE eMode, const WCHAR* szFileName,
 		INT32 line, const WCHAR* szFunSig)
 	{
