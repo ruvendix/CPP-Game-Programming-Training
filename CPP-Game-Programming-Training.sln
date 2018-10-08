@@ -1,0 +1,42 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2010
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "001. 인덱스와 좌표의 변환", "001. 인덱스와 좌표의 변환\001. 인덱스와 좌표의 변환.vcxproj", "{8CDFA82C-2855-4E81-A537-5625D766A08C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{48128F44-1168-41B4-A88F-04B76FEE18E5}"
+	ProjectSection(SolutionItems) = preProject
+		common\base.h = common\base.h
+		common\common.h = common\common.h
+		common\global_constant.h = common\global_constant.h
+		common\global_function.h = common\global_function.h
+		common\global_type.h = common\global_type.h
+		common\global_variable_declaration.h = common\global_variable_declaration.h
+		common\macro.h = common\macro.h
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8CDFA82C-2855-4E81-A537-5625D766A08C}.Debug|x64.ActiveCfg = Debug|x64
+		{8CDFA82C-2855-4E81-A537-5625D766A08C}.Debug|x64.Build.0 = Debug|x64
+		{8CDFA82C-2855-4E81-A537-5625D766A08C}.Debug|x86.ActiveCfg = Debug|Win32
+		{8CDFA82C-2855-4E81-A537-5625D766A08C}.Debug|x86.Build.0 = Debug|Win32
+		{8CDFA82C-2855-4E81-A537-5625D766A08C}.Release|x64.ActiveCfg = Release|x64
+		{8CDFA82C-2855-4E81-A537-5625D766A08C}.Release|x64.Build.0 = Release|x64
+		{8CDFA82C-2855-4E81-A537-5625D766A08C}.Release|x86.ActiveCfg = Release|Win32
+		{8CDFA82C-2855-4E81-A537-5625D766A08C}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3A93A816-E124-4B05-9FE9-F957249A8E72}
+	EndGlobalSection
+EndGlobal
