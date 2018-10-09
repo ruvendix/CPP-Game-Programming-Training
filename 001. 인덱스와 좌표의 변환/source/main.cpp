@@ -181,8 +181,8 @@ void OnMinMaxInfo(LPARAM lParam)
 		return;
 	}
 
-	pMinMax->ptMinTrackSize.x = 100 * 5;
-	pMinMax->ptMinTrackSize.y = 100 * 5;
+	pMinMax->ptMinTrackSize.x = CELL_SIZE * 5;
+	pMinMax->ptMinTrackSize.y = CELL_SIZE * 5;
 }
 
 void OnDestroy()
