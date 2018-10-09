@@ -61,7 +61,7 @@ void GameBoard::ConvertMousePosToCellIdx(INT32 clientMouseX, INT32 clientMouseY)
 	}
 }
 
-RECT* GameBoard::ConvertCellIdxToGameBoardRect(INT32 cellIdx, RECT * pRtCell)
+RECT* GameBoard::ConvertCellIdxToGameBoardRect(INT32 cellIdx, RECT* pRtCell)
 {
 	if ( (cellIdx < 0) ||
 		 (cellIdx > (m_rowCnt * m_columnCnt) - 1) )
