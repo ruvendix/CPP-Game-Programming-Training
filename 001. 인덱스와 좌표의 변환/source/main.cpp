@@ -16,8 +16,8 @@
 namespace
 {
 	RX::RXMain* g_pMain         = nullptr;
-	POINT       g_ptClientMouse = { 0, 0 };
 	GameBoard*  g_pGameBoard    = nullptr;
+	POINT       g_ptClientMouse = { 0, 0 };
 }
 
 
@@ -26,6 +26,7 @@ namespace
 HRESULT CALLBACK OnInit();
 HRESULT CALLBACK OnRelease();
 
+
 // 메시지 프로시저입니다.
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 void OnPaint();
@@ -33,6 +34,7 @@ void OnMouseLButtonDown(LPARAM lParam);
 void OnMouseMove(LPARAM lParam);
 void OnMinMaxInfo(LPARAM lParam);
 void OnDestroy();
+
 
 // ====================================================================================
 // <Win32 API는 WinMain()이 진입점입니다>
