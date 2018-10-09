@@ -138,6 +138,7 @@ void OnPaint()
 		g_pGameBoard->DrawGameBoard();
 	}
 
+#ifdef _DEBUG
 	POINT ptMouseInDesktop;
 	::GetCursorPos(&ptMouseInDesktop);
 
@@ -151,6 +152,7 @@ void OnPaint()
 		L"클라이언트 마우스 좌표 (%d, %d)",
 		g_ptClientMouse.x, g_ptClientMouse.y);
 	TextOut(g_hMainDC, 0, 20, szTemp, wcslen(szTemp));
+#endif
 
 	::SelectObject(hdc, hOldBrush);
 
