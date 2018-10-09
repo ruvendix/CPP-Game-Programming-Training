@@ -247,8 +247,11 @@ void OnMinMaxInfo(LPARAM lParam)
 void OnDestroy()
 {
 	::DeleteObject(g_hHighlightBrush);
+
+	::SelectObject(g_hBackBufferDC, g_hOldBackBufferBitmap);
 	::DeleteObject(g_hBackBufferBitmap);
 	::DeleteDC(g_hBackBufferDC);
+
 	::ReleaseDC(g_hMainWnd, g_hMainDC); // 메인 DC를 정리해줍니다. (레퍼런스 카운트 감소)
 	::PostQuitMessage(0);
 }
