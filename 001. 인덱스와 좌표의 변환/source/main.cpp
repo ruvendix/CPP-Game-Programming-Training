@@ -90,7 +90,6 @@ HRESULT CALLBACK OnInit()
 	NULLCHK_HEAPALLOC(g_pGameBoard);
 	g_pGameBoard->InitGameBoard();
 
-	InvalidateRect(g_hMainWnd, nullptr, TRUE);
 	return S_OK;
 }
 
