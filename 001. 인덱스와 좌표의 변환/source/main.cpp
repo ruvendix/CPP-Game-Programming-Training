@@ -176,10 +176,7 @@ void OnMouseMove(LPARAM lParam)
 void OnMinMaxInfo(LPARAM lParam)
 {
 	MINMAXINFO* pMinMax = reinterpret_cast<MINMAXINFO*>(lParam);
-	if (pMinMax == nullptr)
-	{
-		return;
-	}
+	NULLCHK_RETURN_NOCOMENT(pMinMax);
 
 	pMinMax->ptMinTrackSize.x = CELL_SIZE * 5;
 	pMinMax->ptMinTrackSize.y = CELL_SIZE * 5;
