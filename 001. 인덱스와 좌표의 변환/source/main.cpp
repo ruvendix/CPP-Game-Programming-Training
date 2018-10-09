@@ -24,17 +24,19 @@ namespace
 // ====================================================================================
 // 함수 선언부입니다.
 HRESULT CALLBACK OnInit();
+HRESULT CALLBACK OnRender();
 HRESULT CALLBACK OnRelease();
 
 
 // 메시지 프로시저입니다.
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-void OnPaint();
 void OnMouseLButtonDown(LPARAM lParam);
 void OnMouseMove(LPARAM lParam);
 void OnMinMaxInfo(LPARAM lParam);
 void OnDestroy();
 
+// 그 외의 함수입니다.
+void RecreateBackBuffer();
 
 // ====================================================================================
 // <Win32 API는 WinMain()이 진입점입니다>
@@ -52,6 +54,7 @@ INT32 APIENTRY _tWinMain(HINSTANCE hInstance,
 	NULLCHK_HEAPALLOC(g_pMain);
 	
 	g_pMain->setSubFunc(OnInit,    SUBFUNC_TYPE::INIT);
+	g_pMain->setSubFunc(OnRender,  SUBFUNC_TYPE::RENDER);
 	g_pMain->setSubFunc(OnRelease, SUBFUNC_TYPE::RELEASE);
 
 	g_pMain->RunMainRoutine(hInstance, IDI_RUVENDIX_ICO);
@@ -67,17 +70,62 @@ HRESULT CALLBACK OnInit()
 	// 프로젝트에서 자주 사용하는
 	// 메인 윈도우 핸들과 메인 DC를 초기화해줍니다.
 	g_hMainWnd = g_pMain->getMainWindowHandle();
-	g_hMainDC  = ::GetDC(g_hMainWnd);
+	g_hMainDC = ::GetDC(g_hMainWnd);
 
-	::SetBkMode(g_hMainDC, TRANSPARENT);
+	// 더블 버퍼링 초기화입니다.
+	g_hBackBufferDC = ::CreateCompatibleDC(g_hMainDC);
+	g_hBackBufferBitmap = ::CreateCompatibleBitmap(g_hMainDC,
+		g_pMain->getClientWidth(), g_pMain->getClientHeight());
+	g_hOldBackBufferBitmap =
+		static_cast<HBITMAP>(::SelectObject(g_hBackBufferDC, g_hBackBufferBitmap));
+
+	// 기본 렌더링 옵션 설정입니다.
+	::SetBkMode(g_hBackBufferDC, TRANSPARENT);
+	g_hHighlightBrush = ::CreateSolidBrush(RGB(0, 255, 0));
+
 	g_pMain->setWndProc(WndProc);
 	g_pMain->ChangeProgramTitle(L"IndexAndCoordinates");
-
-	g_hHighlightBrush = ::CreateSolidBrush(RGB(0, 255, 0));
 
 	g_pGameBoard = RXNew GameBoard;
 	NULLCHK_HEAPALLOC(g_pGameBoard);
 	g_pGameBoard->InitGameBoard();
+
+	InvalidateRect(g_hMainWnd, nullptr, TRUE);
+	return S_OK;
+}
+
+HRESULT CALLBACK OnRender()
+{
+	// 백버퍼를 클리어해줍니다.
+	::FillRect(g_hBackBufferDC, &g_pMain->getClientRect(),
+		static_cast<HBRUSH>(::GetStockObject(GRAY_BRUSH)));
+
+	if (g_pGameBoard)
+	{
+		g_pGameBoard->CalcGameBoard();
+		g_pGameBoard->DrawGameBoard();
+	}
+
+#ifdef _DEBUG
+	POINT ptMouseInDesktop;
+	::GetCursorPos(&ptMouseInDesktop);
+
+	WCHAR szTemp[DEFAULT_STRING_LENGTH];
+	_snwprintf_s(szTemp, _countof(szTemp),
+		L"데스크탑 마우스 좌표 (%d, %d)",
+		ptMouseInDesktop.x, ptMouseInDesktop.y);
+	TextOut(g_hBackBufferDC, 0, 0, szTemp, wcslen(szTemp));
+
+	_snwprintf_s(szTemp, _countof(szTemp),
+		L"클라이언트 마우스 좌표 (%d, %d)",
+		g_ptClientMouse.x, g_ptClientMouse.y);
+	TextOut(g_hBackBufferDC, 0, 20, szTemp, wcslen(szTemp));
+#endif
+
+	// 백버퍼의 내용을 화면으로 복사합니다.
+	::BitBlt(g_hMainDC, 0, 0, g_pMain->getClientWidth(),
+		g_pMain->getClientHeight(),
+		g_hBackBufferDC, 0, 0, SRCCOPY);
 
 	return S_OK;
 }
@@ -86,7 +134,6 @@ HRESULT CALLBACK OnInit()
 HRESULT CALLBACK OnRelease()
 {
 	SAFE_DELTE(g_pGameBoard);
-	::ReleaseDC(g_hMainWnd, g_hMainDC); // 메인 DC를 정리해줍니다. (레퍼런스 카운트 감소)
 	return S_OK;
 }
 
@@ -96,7 +143,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_PAINT:
 	{
-		OnPaint();
+		OnRender();
 		break;
 	}
 	case WM_DESTROY:
@@ -119,60 +166,71 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		OnMinMaxInfo(lParam);
 		break;
 	}
+	case WM_SYSCOMMAND:
+	{
+		switch (wParam)
+		{
+		case SC_MAXIMIZE:
+		{
+			g_pMain->ToggleFullScreenMode(true);
+			g_pMain->AdjustClientRect();
+			RecreateBackBuffer();
+			RXDEBUGLOG("최대화를 클릭했습니다. 창 화면 -> 전체 화면");
+			break;
+		}
+		}
+
+		break;
+	}
+	}
+
+	// Alt + Enter를 위한 처리입니다.
+	switch (msg)
+	{
+	case WM_KEYDOWN:
+	case WM_SYSKEYDOWN:
+	{
+		// 왼쪽 Alt + Enter입니다.
+		// 오른쪽 Alt는 WM_KEYDOWN으로 들어옵니다.
+		if (wParam == VK_RETURN)
+		{
+			if ((HIWORD(lParam) & KF_ALTDOWN)) // Alt를 눌렀는지 비트 플래그로 확인합니다.
+			{
+				g_pMain->ToggleFullScreenMode();
+				g_pMain->AdjustClientRect();
+				RecreateBackBuffer();
+				RXDEBUGLOG("왼쪽 Alt + Enter를 눌렀습니다. 전체 화면 <-> 창 화면");
+			}
+		}
+
+		break;
+	}
 	}
 
 	return ::DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
-void OnPaint()
-{
-	PAINTSTRUCT ps;
-	HDC hdc = BeginPaint(g_hMainWnd, &ps);
-
-	::SetBkMode(hdc, TRANSPARENT);
-
-	HBRUSH hOldBrush = static_cast<HBRUSH>(::SelectObject(hdc, g_hHighlightBrush));
-
-	// TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다.
-	if (g_pGameBoard)
-	{
-		g_pGameBoard->CalcGameBoard();
-		g_pGameBoard->DrawGameBoard();
-	}
-
-#ifdef _DEBUG
-	POINT ptMouseInDesktop;
-	::GetCursorPos(&ptMouseInDesktop);
-
-	WCHAR szTemp[DEFAULT_STRING_LENGTH];
-	_snwprintf_s(szTemp, _countof(szTemp),
-		L"데스크탑 마우스 좌표 (%d, %d)",
-		ptMouseInDesktop.x, ptMouseInDesktop.y);
-	TextOut(g_hMainDC, 0, 0, szTemp, wcslen(szTemp));
-
-	_snwprintf_s(szTemp, _countof(szTemp),
-		L"클라이언트 마우스 좌표 (%d, %d)",
-		g_ptClientMouse.x, g_ptClientMouse.y);
-	TextOut(g_hMainDC, 0, 20, szTemp, wcslen(szTemp));
-#endif
-
-	::SelectObject(hdc, hOldBrush);
-
-	EndPaint(g_hMainWnd, &ps);
-}
+//void OnPaint()
+//{
+//	PAINTSTRUCT ps;
+//	HDC hdc = BeginPaint(g_hMainWnd, &ps);
+//	EndPaint(g_hMainWnd, &ps);
+//}
 
 void OnMouseLButtonDown(LPARAM lParam)
 {
 	g_pGameBoard->ConvertMousePosToCellIdx(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 	g_pGameBoard->ApplyCellRectByPlayerClicked();
-	InvalidateRect(g_hMainWnd, nullptr, true);
+	InvalidateRect(g_hMainWnd, nullptr, TRUE);
 }
 
 void OnMouseMove(LPARAM lParam)
 {
 	g_ptClientMouse.x = GET_X_LPARAM(lParam);
 	g_ptClientMouse.y = GET_Y_LPARAM(lParam);
-	InvalidateRect(g_hMainWnd, nullptr, true);
+
+	// 더블 버퍼링에서는 무효화 영역을 알리지 않아도 됩니다.
+	//InvalidateRect(g_hMainWnd, nullptr, TRUE);
 }
 
 void OnMinMaxInfo(LPARAM lParam)
@@ -182,10 +240,26 @@ void OnMinMaxInfo(LPARAM lParam)
 
 	pMinMax->ptMinTrackSize.x = CELL_SIZE * 5;
 	pMinMax->ptMinTrackSize.y = CELL_SIZE * 5;
+
+	g_pMain->AdjustClientRect();
+	RecreateBackBuffer();
 }
 
 void OnDestroy()
 {
 	::DeleteObject(g_hHighlightBrush);
-	PostQuitMessage(0);
+	::DeleteObject(g_hBackBufferBitmap);
+	::DeleteDC(g_hBackBufferDC);
+	::ReleaseDC(g_hMainWnd, g_hMainDC); // 메인 DC를 정리해줍니다. (레퍼런스 카운트 감소)
+	::PostQuitMessage(0);
+}
+
+void RecreateBackBuffer()
+{
+	::SelectObject(g_hBackBufferDC, g_hOldBackBufferBitmap);
+	::DeleteObject(g_hBackBufferBitmap);
+	g_hBackBufferBitmap = ::CreateCompatibleBitmap(g_hMainDC,
+		g_pMain->getClientWidth(), g_pMain->getClientHeight());
+	g_hOldBackBufferBitmap =
+		static_cast<HBITMAP>(::SelectObject(g_hBackBufferDC, g_hBackBufferBitmap));
 }

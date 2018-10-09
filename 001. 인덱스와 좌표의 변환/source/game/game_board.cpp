@@ -28,7 +28,6 @@ void GameBoard::InitGameBoard()
 void GameBoard::CalcGameBoard()
 {
 	RECT rtClient;
-	::SetRectEmpty(&rtClient);
 	::GetClientRect(g_hMainWnd, &rtClient);
 
 	INT32 width  = rtClient.right - rtClient.left;
@@ -87,32 +86,35 @@ RECT* GameBoard::ConvertCellIdxToGameBoardRect(INT32 cellIdx, RECT * pRtCell)
 void GameBoard::DrawGameBoard()
 {
 	//::Rectangle(hdc, rc.left, rc.top, rc.right, rc.bottom);
-	::FillRect(g_hMainDC, &m_rtGameBoard, static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH)));
+	::FillRect(g_hBackBufferDC, &m_rtGameBoard, static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH)));
 
-	for (INT32 i = 0; i < m_columnCnt; ++i)
+	for (INT32 i = 0; i <= m_columnCnt; ++i)
 	{
 		// 세로줄을 그립니다.
-		RX::DrawLineWin32(g_hMainDC, m_rtGameBoard.left + CELL_SIZE * i, m_rtGameBoard.top,
+		RX::DrawLineWin32(g_hBackBufferDC, m_rtGameBoard.left + CELL_SIZE * i, m_rtGameBoard.top,
 			m_rtGameBoard.left + CELL_SIZE * i, m_rtGameBoard.bottom);
 	}
 
-	for (INT32 i = 0; i < m_rowCnt; ++i)
+	for (INT32 i = 0; i <= m_rowCnt; ++i)
 	{
 		// 가로줄을 그립니다.
-		RX::DrawLineWin32(g_hMainDC, m_rtGameBoard.left, m_rtGameBoard.top + CELL_SIZE * i,
+		RX::DrawLineWin32(g_hBackBufferDC, m_rtGameBoard.left, m_rtGameBoard.top + CELL_SIZE * i,
 			m_rtGameBoard.right, m_rtGameBoard.top + CELL_SIZE * i);
 	}
+
+	HBRUSH hOldBrush = static_cast<HBRUSH>(::SelectObject(g_hBackBufferDC, g_hHighlightBrush));
 
 	// 클릭한 셀 인덱스가 있다면 그 셀을 g_hHighlightBrush로 채웁니다.
 	if (m_cellIdxByPlayerClicked != -1)
 	{
 		ConvertCellIdxToGameBoardRect(m_cellIdxByPlayerClicked, &m_rtCellByPlayerClicked);
-		::FillRect(g_hMainDC, &m_rtCellByPlayerClicked, g_hHighlightBrush);
+		::FillRect(g_hBackBufferDC, &m_rtCellByPlayerClicked, g_hHighlightBrush);
 	}
 
+	::SelectObject(g_hBackBufferDC, hOldBrush);
+
 #ifdef _DEBUG // 디버그 정보
-	RECT rtDebug = { 0, 0, 256, 60 };
-	::FillRect(g_hMainDC, &rtDebug, static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH)));
+	Rectangle(g_hBackBufferDC, 0, 0, DEFAULT_STRING_LENGTH / 2, 60);
 
 	WCHAR szTemp[256];
 	for (INT32 i = 0; i < m_rowCnt; ++i)
@@ -127,13 +129,13 @@ void GameBoard::DrawGameBoard()
 			rtCell.right = rtCell.left + CELL_SIZE;
 			rtCell.bottom = rtCell.top + CELL_SIZE;
 			
-			::DrawText(g_hMainDC, szTemp, -1, &rtCell, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
+			::DrawText(g_hBackBufferDC, szTemp, -1, &rtCell, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
 		}
 	}
 
 	INT32 clickedIdx = getCellIdxByPlayerClicked();
 	_snwprintf_s(szTemp, _countof(szTemp),
 		L"클릭한 셀 인덱스 = %d", clickedIdx);
-	TextOut(g_hMainDC, 0, 40, szTemp, wcslen(szTemp));
+	TextOut(g_hBackBufferDC, 0, 40, szTemp, wcslen(szTemp));
 #endif
 }

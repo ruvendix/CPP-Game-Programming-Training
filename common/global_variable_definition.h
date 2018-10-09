@@ -20,11 +20,15 @@
 extern HWND g_hMainWnd = nullptr;
 extern HDC  g_hMainDC  = nullptr;
 
+extern HDC     g_hBackBufferDC        = nullptr;
+extern HBITMAP g_hBackBufferBitmap    = nullptr;
+extern HBITMAP g_hOldBackBufferBitmap = nullptr;
 
 // ====================================================================================
 // 각 프로젝트별로 사용하는 전역 상수입니다.
 //
 // 001 프로젝트입니다.
 extern HBRUSH g_hHighlightBrush = nullptr;
+
 
 #endif

@@ -189,10 +189,13 @@ namespace RX
 		// 파일에 뭔가를 쓰려면 파일 스트림을 열고 닫아야 합니다.
 		// Win32 API로도 파일 핸들로 스트림을 열고 닫습니다.
 		// 단 한 줄을 쓰더라도 파일 스트림을 열고 닫아야 합니다.
-		FILE* pLog = nullptr;
-		fopen_s(&pLog, g_szLogFile, "at");
-		fwprintf(pLog, szFull);
-		fclose(pLog);
+		if (szFile != nullptr)
+		{
+			FILE* pLog = nullptr;
+			fopen_s(&pLog, g_szLogFile, "at");
+			fwprintf(pLog, szFull);
+			fclose(pLog);
+		}
 
 		if (bError)
 		{

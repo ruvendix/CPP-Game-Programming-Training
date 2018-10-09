@@ -16,16 +16,19 @@
 
 
 // ====================================================================================
-// 전체 프로젝트가 공유하는 전역 상수입니다.
+// 전체 프로젝트가 공유하는 전역 변수입니다.
 extern HWND g_hMainWnd;
 extern HDC  g_hMainDC;
 
+extern HBRUSH  g_hHighlightBrush;
+extern HDC     g_hBackBufferDC;
+extern HBITMAP g_hBackBufferBitmap;
+extern HBITMAP g_hOldBackBufferBitmap;
 
 // ====================================================================================
-// 각 프로젝트별로 사용하는 전역 상수입니다.
+// 각 프로젝트별로 사용하는 전역 변수입니다.
 //
 // 001 프로젝트입니다.
 extern HBRUSH g_hHighlightBrush;
-
 
 #endif
