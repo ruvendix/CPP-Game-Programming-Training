@@ -7,13 +7,14 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "001. 인덱스와 좌표의
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{48128F44-1168-41B4-A88F-04B76FEE18E5}"
 	ProjectSection(SolutionItems) = preProject
-		common\base.h = common\base.h
-		common\common.h = common\common.h
-		common\global_constant.h = common\global_constant.h
-		common\global_function.h = common\global_function.h
-		common\global_type.h = common\global_type.h
-		common\global_variable_declaration.h = common\global_variable_declaration.h
-		common\macro.h = common\macro.h
+		common\include\base.h = common\include\base.h
+		common\include\common.h = common\include\common.h
+		common\include\global_constant.h = common\include\global_constant.h
+		common\include\global_function.h = common\include\global_function.h
+		common\include\global_type.h = common\include\global_type.h
+		common\include\global_variable_declaration.h = common\include\global_variable_declaration.h
+		common\include\macro.h = common\include\macro.h
+		common\include\main.h = common\include\main.h
 	EndProjectSection
 EndProject
 Global
