@@ -1,7 +1,7 @@
 #include "base_project.h"
-#include "global_variable_definition.h"
-
-#include "game\game_board.h"
+#include "global_variable_declaration.h"
+#include "game/game_board.h"
+#include "main.h"
 
 // ====================================================================================
 // 매크로 정의부입니다.
@@ -20,6 +20,13 @@ namespace
 	POINT       g_ptClientMouse = { 0, 0 };
 }
 
+extern HWND g_hMainWnd = nullptr;
+extern HDC  g_hMainDC  = nullptr;
+
+extern HBRUSH  g_hHighlightBrush      = nullptr;
+extern HDC     g_hBackBufferDC        = nullptr;
+extern HBITMAP g_hBackBufferBitmap    = nullptr;
+extern HBITMAP g_hOldBackBufferBitmap = nullptr;
 
 // ====================================================================================
 // 함수 선언부입니다.
