@@ -39,6 +39,7 @@ HRESULT CALLBACK OnRelease();
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 void OnMouseLButtonDown(LPARAM lParam);
 void OnMouseMove(LPARAM lParam);
+void OnChangeSize();
 void OnMinMaxInfo(LPARAM lParam);
 void OnDestroy();
 
@@ -167,6 +168,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		OnMouseMove(lParam);
 		break;
 	}
+	case WM_SIZE:
+	{
+		OnChangeSize();
+		break;
+	}
 	case WM_GETMINMAXINFO: // 최대 최소화 제한 걸기
 	{
 		OnMinMaxInfo(lParam);
@@ -239,6 +245,12 @@ void OnMouseMove(LPARAM lParam)
 	//InvalidateRect(g_hMainWnd, nullptr, TRUE);
 }
 
+void OnChangeSize()
+{
+	g_pMain->AdjustClientRect();
+	RecreateBackBuffer();
+}
+
 void OnMinMaxInfo(LPARAM lParam)
 {
 	MINMAXINFO* pMinMax = reinterpret_cast<MINMAXINFO*>(lParam);
@@ -246,9 +258,6 @@ void OnMinMaxInfo(LPARAM lParam)
 
 	pMinMax->ptMinTrackSize.x = CELL_SIZE * 5;
 	pMinMax->ptMinTrackSize.y = CELL_SIZE * 5;
-
-	g_pMain->AdjustClientRect();
-	RecreateBackBuffer();
 }
 
 void OnDestroy()
