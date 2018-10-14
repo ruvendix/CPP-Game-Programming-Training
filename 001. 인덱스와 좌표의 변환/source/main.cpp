@@ -35,12 +35,14 @@ HRESULT CALLBACK OnRender();
 HRESULT CALLBACK OnRelease();
 
 
-// 메시지 프로시저입니다.
+// 메시지 프로시저 및 메시지 핸들러입니다.
 LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 void OnMouseLButtonDown(LPARAM lParam);
 void OnMouseMove(LPARAM lParam);
-void OnChangeSize();
+void OnSize();
 void OnMinMaxInfo(LPARAM lParam);
+void OnMaximize();
+void OnAltEnter(WPARAM wParam, LPARAM lParam);
 void OnDestroy();
 
 // 그 외의 함수입니다.
@@ -170,7 +172,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	}
 	case WM_SIZE:
 	{
-		OnChangeSize();
+		OnSize();
 		break;
 	}
 	case WM_GETMINMAXINFO: // 최대 최소화 제한 걸기
@@ -184,10 +186,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		{
 		case SC_MAXIMIZE:
 		{
-			g_pMain->ToggleFullScreenMode(true);
-			g_pMain->AdjustClientRect();
-			RecreateBackBuffer();
-			RXDEBUGLOG("최대화를 클릭했습니다. 창 화면 -> 전체 화면");
+			OnMaximize();
 			break;
 		}
 		}
@@ -202,19 +201,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_KEYDOWN:
 	case WM_SYSKEYDOWN:
 	{
-		// 왼쪽 Alt + Enter입니다.
-		// 오른쪽 Alt는 WM_KEYDOWN으로 들어옵니다.
-		if (wParam == VK_RETURN)
-		{
-			if ((HIWORD(lParam) & KF_ALTDOWN)) // Alt를 눌렀는지 비트 플래그로 확인합니다.
-			{
-				g_pMain->ToggleFullScreenMode();
-				g_pMain->AdjustClientRect();
-				RecreateBackBuffer();
-				RXDEBUGLOG("왼쪽 Alt + Enter를 눌렀습니다. 전체 화면 <-> 창 화면");
-			}
-		}
-
+		OnAltEnter(wParam, lParam);
 		break;
 	}
 	}
@@ -245,7 +232,7 @@ void OnMouseMove(LPARAM lParam)
 	//InvalidateRect(g_hMainWnd, nullptr, TRUE);
 }
 
-void OnChangeSize()
+void OnSize()
 {
 	g_pMain->AdjustClientRect();
 	RecreateBackBuffer();
@@ -258,6 +245,30 @@ void OnMinMaxInfo(LPARAM lParam)
 
 	pMinMax->ptMinTrackSize.x = CELL_SIZE * 5;
 	pMinMax->ptMinTrackSize.y = CELL_SIZE * 5;
+}
+
+void OnMaximize()
+{
+	g_pMain->ToggleFullScreenMode(true);
+	g_pMain->AdjustClientRect();
+	RecreateBackBuffer();
+	RXDEBUGLOG("최대화를 클릭했습니다. 창 화면 -> 전체 화면");
+}
+
+void OnAltEnter(WPARAM wParam, LPARAM lParam)
+{
+	// 왼쪽 Alt + Enter입니다.
+	// 오른쪽 Alt는 WM_KEYDOWN으로 들어옵니다.
+	if (wParam == VK_RETURN)
+	{
+		if (HIWORD(lParam) & KF_ALTDOWN) // Alt를 눌렀는지 비트 플래그로 확인합니다.
+		{
+			g_pMain->ToggleFullScreenMode();
+			g_pMain->AdjustClientRect();
+			RecreateBackBuffer();
+			RXDEBUGLOG("왼쪽 Alt + Enter를 눌렀습니다. 전체 화면 <-> 창 화면");
+		}
+	}
 }
 
 void OnDestroy()
