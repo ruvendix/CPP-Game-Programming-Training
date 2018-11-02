@@ -234,7 +234,6 @@ void OnMouseMove(LPARAM lParam)
 
 void OnSize()
 {
-	g_pMain->AdjustClientRect();
 	RecreateBackBuffer();
 }
 
@@ -250,7 +249,6 @@ void OnMinMaxInfo(LPARAM lParam)
 void OnMaximize()
 {
 	g_pMain->ToggleFullScreenMode(true);
-	g_pMain->AdjustClientRect();
 	RecreateBackBuffer();
 	RXDEBUGLOG("최대화를 클릭했습니다. 창 화면 -> 전체 화면");
 }
@@ -264,7 +262,6 @@ void OnAltEnter(WPARAM wParam, LPARAM lParam)
 		if (HIWORD(lParam) & KF_ALTDOWN) // Alt를 눌렀는지 비트 플래그로 확인합니다.
 		{
 			g_pMain->ToggleFullScreenMode();
-			g_pMain->AdjustClientRect();
 			RecreateBackBuffer();
 			RXDEBUGLOG("왼쪽 Alt + Enter를 눌렀습니다. 전체 화면 <-> 창 화면");
 		}

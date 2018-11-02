@@ -38,7 +38,10 @@ namespace RX
 		virtual HRESULT ToggleFullScreenMode(bool bFullScreen = false);
 
 		void ChangeProgramTitle(const TCHAR* szTitle);
-		void AdjustClientRect();
+
+		// 원하는 클라이언트 해상도를 넣으면
+		// 윈도우 영역까지 계산해서 적용해줍니다.
+		void AdjustProgramRange(INT32 width, INT32 height);
 
 		bool IsFullScreen() const noexcept
 		{
@@ -65,6 +68,11 @@ namespace RX
 		HWND getMainWindowHandle() const noexcept
 		{
 			return m_hMainWnd;
+		}
+
+		HMONITOR getMainMonitorHandle() const noexcept
+		{
+			return m_hMainMonitor;
 		}
 
 		RECT getClientRect() const noexcept
@@ -94,9 +102,9 @@ namespace RX
 			::SetWindowLongPtr(m_hMainWnd, GWLP_WNDPROC, reinterpret_cast<LONG>(wndProc));
 		}
 
-		void setSubFunc(SubFunc func, SUBFUNC_TYPE type)
+		void setSubFunc(SubFunc subFunc, SUBFUNC_TYPE type)
 		{
-			m_subFunc[static_cast<INT32>(type)].func = func;
+			m_subFunc[static_cast<INT32>(type)].subFunc = subFunc;
 		}
 
 		void setFullScreen(bool bFullScreen)
@@ -105,20 +113,16 @@ namespace RX
 		}
 
 	protected:
-		// ====================================================================================
-		// 기본 정보
-		bool             m_bFullScreen;
-		HWND             m_hMainWnd;
-		HINSTANCE        m_hInst;
-		ROUTINE_STATE    m_routineState;
-		INT32            m_msgCode;
-		RECT             m_rtClient;
-		RECT             m_rtWindow;
-		SubFuncInfo      m_subFunc[SubFuncInfo::MAX_SUBFUNC];
-
-		// ====================================================================================
-		// 리소스 정보
-		INT32            m_iconID;
+		bool          m_bFullScreen;  // 전체 화면 여부입니다.
+		HWND          m_hMainWnd;     // 프로그램 주 창 핸들입니다.
+		HMONITOR      m_hMainMonitor; // 주 모니터입니다.
+		HINSTANCE     m_hInst;        // 프로그램 인스턴스 핸들입니다.
+		ROUTINE_STATE m_routineState; // 프로그램 루틴 상태입니다.
+		INT32         m_msgCode;      // 메시지 핸들러의 코드값입니다.
+		INT32         m_iconID;       // 프로그램 아이콘 아이디입니다.
+		RECT          m_rtClient;     // 프로그램 클라이언트 영역입니다.
+		RECT          m_rtWindow;     // 프로그램 전체 영역입니다.
+		SubFuncInfo   m_subFunc[SubFuncInfo::MAX_SUBFUNC]; // 콜백 서브 루틴입니다.
 	};
 
 } // namespace RX end

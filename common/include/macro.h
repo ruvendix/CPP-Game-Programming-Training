@@ -1,13 +1,13 @@
-/*====================================================================================
+ï»¿/*====================================================================================
  *
  * Copyright (C) Ruvendix. All Rights Reserved.
  *
- * <ÀÛ¼º ³¯Â¥>
+ * <ì‘ì„± ë‚ ì§œ>
  * 2018-08-07
  *
- * <ÆÄÀÏ ³»¿ë>
- * °øµ¿À¸·Î »ç¿ëµÇ´Â ¸ÅÅ©·Î ¸ğÀ½ÀÔ´Ï´Ù.
- * Àü¿ª ÇÔ¼ö¿¡ ¿µÇâÀ» ¹Ş½À´Ï´Ù.
+ * <íŒŒì¼ ë‚´ìš©>
+ * ê³µë™ìœ¼ë¡œ ì‚¬ìš©ë˜ëŠ” ë§¤í¬ë¡œ ëª¨ìŒì…ë‹ˆë‹¤.
+ * ì „ì—­ í•¨ìˆ˜ì— ì˜í–¥ì„ ë°›ìŠµë‹ˆë‹¤.
  *
  ====================================================================================*/
 #ifndef MACRO_H__
@@ -15,10 +15,15 @@
 
 #include "global_function.h"
 
+ // ====================================================================================
+ // ë¹„íŠ¸ ê´€ë ¨ ë§¤í¬ë¡œì…ë‹ˆë‹¤.
+#define ON_BIT(data, value)  (data |= value)
+#define OFF_BIT(data, value) (data &= ~value)
+#define IS_BIT(data, value)  ((data & value) != 0)
+
 // ====================================================================================
-// µ¿Àû ÇÒ´ç, Release, LostDevice, ResetDevice °ü·Ã ¸ÅÅ©·ÎÀÔ´Ï´Ù.
-// µ¿Àû ÇÒ´ç ¿µ¿ªÀº _NORMAL_BLOCKÀ¸·Î ¼³Á¤ÇÕ´Ï´Ù.
-//
+// ë™ì  í• ë‹¹, Release, LostDevice, ResetDevice ê´€ë ¨ ë§¤í¬ë¡œì…ë‹ˆë‹¤.
+// ë™ì  í• ë‹¹ ì˜ì—­ì€ _NORMAL_BLOCKìœ¼ë¡œ ì„¤ì •í•©ë‹ˆë‹¤.
 #if defined(DEBUG) | defined(_DEBUG)
 #define RXNew new(_NORMAL_BLOCK, __FILE__, __LINE__)
 #else
@@ -52,14 +57,14 @@ if (ptr)\
     ptr = nullptr;\
 }
 
-// ÀåÄ¡¸¦ ¼Õ½ÇÇßÀ» ¶§ »ç¿ëµË´Ï´Ù.
+// ì¥ì¹˜ë¥¼ ì†ì‹¤í–ˆì„ ë•Œ ì‚¬ìš©ë©ë‹ˆë‹¤.
 #define SAFE_LOST_DEVICE(ptr)\
 if (ptr)\
 {\
 	ptr->OnLostDevice();\
 }
 
-// ÀåÄ¡¸¦ º¹±¸ÇÒ ¶§ »ç¿ëµË´Ï´Ù.
+// ì¥ì¹˜ë¥¼ ë³µêµ¬í•  ë•Œ ì‚¬ìš©ë©ë‹ˆë‹¤.
 #define SAFE_RESET_DEVICE(ptr)\
 if (ptr)\
 {\
@@ -67,23 +72,26 @@ if (ptr)\
 }
 
 // ====================================================================================
-// ¸Ş½ÃÁö ¹Ú½º °ü·Ã ¸ÅÅ©·ÎÀÔ´Ï´Ù.
-//
+// ë©”ì‹œì§€ ë°•ìŠ¤ ê´€ë ¨ ë§¤í¬ë¡œì…ë‹ˆë‹¤.
 #if defined(_UNICODE) || defined(UNICODE)
 #define WIDEN(x)       L##x
 #define WIDEN2(x)      WIDEN(x)
 #define __TFILE__      WIDEN2(__FILE__)
 #define __TFUNCTION__  WIDEN2(__FUNCTION__)
-#define __TFUNSIG__    WIDEN2(__FUNCSIG__)
+#define __TFUNCSIG__   WIDEN2(__FUNCSIG__)
 #else
 #define __TFILE__      __FILE__
 #define __TFUNCTION__  __FUNCTION__
-#define __TFUNSIG__    __FUNCSIG__
+#define __TFUNCSIG__   __FUNCSIG__
 #endif
 
-// ¸Ş½ÃÁö ¹Ú½º¸¸ Ãâ·ÂÇÕ´Ï´Ù.
-// ÇÁ·ÎÁ§Æ® ¸ğµå¿¡ »ó°ü¾øÀÌ ¹«Á¶°Ç ¾Ë·ÁÁà¾ß ÇÒ ¶§ »ç¿ëÇÕ´Ï´Ù.
-// ERRMSGBOX()´Â ·Î±×·Îµµ Ãâ·ÂÇÕ´Ï´Ù.
+// WCHAR ì „ìš©ì…ë‹ˆë‹¤.
+#define __WFILE__     WIDEN2(__FILE__)
+#define __WFUNCTION__ WIDEN2(__FUNCTION__)
+#define __WFUNCSIG__  WIDEN2(__FUNCSIG__)
+
+// ë©”ì‹œì§€ ë°•ìŠ¤ë§Œ ì¶œë ¥í•©ë‹ˆë‹¤.
+// í”„ë¡œì íŠ¸ ëª¨ë“œì— ìƒê´€ì—†ì´ ë¬´ì¡°ê±´ ì•Œë ¤ì¤˜ì•¼ í•  ë•Œ ì‚¬ìš©í•©ë‹ˆë‹¤.
 #if defined(_UNICODE) || defined(UNICODE)
 #define MSGBOX(szText)      RX::ShowMessageBoxImplW(L##szText)
 #else					         
@@ -96,24 +104,6 @@ if (ptr == nullptr)\
     RXERRLOG(#ptr " is nullptr!");\
 }
 
-#define NULLCHK_RETURN_NOCOMENT(ptr)\
-if (ptr == nullptr)\
-{\
-    RXERRLOG_RETURN(#ptr " is nullptr!");\
-}
-
-#define NULL_RETURN(ptr)\
-if (ptr == nullptr)\
-{\
-    return;\
-}
-
-#define NULL_OK_RETURN(ptr)\
-if (ptr == nullptr)\
-{\
-    return S_OK;\
-}
-
 #define NULLCHK_RETURN(ptr, szErr)\
 if (ptr == nullptr)\
 {\
@@ -121,11 +111,30 @@ if (ptr == nullptr)\
 	RXERRLOG_RETURN(szErr);\
 }
 
-#define NULLCHK_EFAIL_RETURN(ptr, szErr)\
+#define NULLCHK_RETURN_NOCOMENT(ptr)\
+if (ptr == nullptr)\
+{\
+    RXERRLOG_RETURN(#ptr " is nullptr!");\
+}
+
+#define NULLCHK_RETURN_FALSE(ptr)\
+if (ptr == nullptr)\
+{\
+	RXERRLOG_RETURN_FALSE(#ptr " is nullptr!");\
+    return false;\
+}
+
+#define NULLCHK_RETURN_EFAIL(ptr, szErr)\
 if (ptr == nullptr)\
 {\
     RXERRLOG(#ptr " is nullptr!");\
-	RXERRLOG_EFAIL_RETURN(szErr);\
+	RXERRLOG_RETURN_EFAIL(szErr);\
+}
+
+#define NULLCHK_RETURN_EFAIL_NOCOMENT(ptr)\
+if (ptr == nullptr)\
+{\
+    RXERRLOG_RETURN_EFAIL(#ptr " is nullptr!");\
 }
 
 #define NULLCHK_HEAPALLOC(ptr)\
@@ -134,135 +143,274 @@ if (ptr == nullptr)\
     RXERRLOG(#ptr " is failed in heap allocation!");\
 }
 
+#define NULL_RETURN(ptr)\
+if (ptr == nullptr)\
+{\
+    return;\
+}
+
+#define NULL_RETURN_OK(ptr)\
+if (ptr == nullptr)\
+{\
+    return S_OK;\
+}
+
+// ê°€ë³€ì¸ìê°€ ì§€ì›ë˜ì§€ ì•ŠëŠ” ë§¤í¬ë¡œ í•¨ìˆ˜ì…ë‹ˆë‹¤.
 #define RXERRLOG_RETURN(szErr)       RXERRLOG(szErr); return
-#define RXERRLOG_EFAIL_RETURN(szErr) RXERRLOG(szErr); return E_FAIL
+#define RXERRLOG_RETURN_FALSE(szErr) RXERRLOG(szErr); return false
+#define RXERRLOG_RETURN_EFAIL(szErr) RXERRLOG(szErr); return E_FAIL
 
 // ====================================================================================
-// ½ºÆ®¸µ °ü·Ã ¸ÅÅ©·ÎÀÔ´Ï´Ù.
-//
-// µğ¹ö±× ¸ğµå¸¸ ÀÛµ¿, ¸±¸®Áî ¸ğµå´Â X
+// ìŠ¤íŠ¸ë§ ê´€ë ¨ ë§¤í¬ë¡œì…ë‹ˆë‹¤.
+
+// ë””ë²„ê·¸ ëª¨ë“œë§Œ ì‘ë™, ë¦´ë¦¬ì¦ˆ ëª¨ë“œëŠ” X
 #if defined(DEBUG) || defined(_DEBUG)
 	#if defined(_UNICODE) || defined(UNICODE)
 	#define RXDEBUGLOG(szFormat, ...)\
 		RX::RXLogImplW(PROJECT_MODE::PM_DEBUG, false, false, false,\
-			nullptr, __LINE__, __TFUNSIG__, L##szFormat, __VA_ARGS__)
+			nullptr, __LINE__, __TFUNCSIG__, L##szFormat, __VA_ARGS__)
 	#else
 	#define RXDEBUGLOG(szFormat, ...)\
 		RX::RXLogImplA(PROJECT_MODE::PM_DEBUG, false, false, false,\
-			nullptr, __LINE__, __TFUNSIG__, szFormat, __VA_ARGS__)
+			nullptr, __LINE__, __TFUNCSIG__, szFormat, __VA_ARGS__)
 	#endif
 #else
 	#define RXDEBUGLOG __noop
 #endif
 
-// ¼­½Ä ¹®ÀÚ¿­ Áö¿ø, µğ¹ö±× ¸ğµå¿¡¼­´Â µğ¹ö±× Ãâ·ÂÃ¢¿¡µµ Ãâ·Â
-// ¸Ş½ÃÁö ¹Ú½º Ãâ·Â Áö¿ø, ÀÏ¹İ ¸Ş½ÃÁö ¹Ú½º¸¸ Áö¿øÇÕ´Ï´Ù.
+// ì„œì‹ ë¬¸ìì—´ ì§€ì›, ë””ë²„ê·¸ ëª¨ë“œì—ì„œëŠ” ë””ë²„ê·¸ ì¶œë ¥ì°½ì—ë„ ì¶œë ¥
 #if defined(DEBUG) || defined(_DEBUG)
 	#if defined(_UNICODE) || defined(UNICODE)
-	#define RXLOG(bMessageBox, szFormat, ...)\
-		RX::RXLogImplW(PROJECT_MODE::PM_DEBUG, bMessageBox, true, false,\
-			__TFILE__, __LINE__, __TFUNSIG__, L##szFormat, __VA_ARGS__)
+	#define RXLOG(szFormat, ...)\
+		RX::RXLogImplW(PROJECT_MODE::PM_DEBUG, false, true, false,\
+			nullptr, __LINE__, __TFUNCSIG__, L##szFormat, __VA_ARGS__)
 	#else
-	#define RXLOG(bMessageBox, szFormat, ...)\
-		RX::RXLogImplA(PROJECT_MODE::PM_DEBUG, bMessageBox, true, false,\
-			__TFILE__, __LINE__, __TFUNSIG__, szFormat, __VA_ARGS__)
+	#define RXLOG(szFormat, ...)\
+		RX::RXLogImplA(PROJECT_MODE::PM_DEBUG, false, true, false,\
+			nullptr, __LINE__, __TFUNCSIG__, szFormat, __VA_ARGS__)
 	#endif
 #else
 	#if defined(_UNICODE) || defined(UNICODE)
-	#define RXLOG(bMessageBox, szFormat, ...)\
-		RX::RXLogImplW(PROJECT_MODE::PM_RELEASE, bMessageBox, true, false,\
-			__TFILE__, __LINE__, __TFUNSIG__, L##szFormat, __VA_ARGS__)
+	#define RXLOG(szFormat, ...)\
+		RX::RXLogImplW(PROJECT_MODE::PM_RELEASE, false, true, false,\
+			nullptr, __LINE__, __TFUNCSIG__, L##szFormat, __VA_ARGS__)
 	#else
-	#define RXLOG(bMessageBox, szFormat, ...)\
-		RX::RXLogImplA(PROJECT_MODE::PM_RELEASE, bMessageBox, true, false,\
-			__TFILE__, __LINE__, __TFUNSIG__, szFormat, __VA_ARGS__)
+	#define RXLOG(szFormat, ...)\
+		RX::RXLogImplA(PROJECT_MODE::PM_RELEASE, false, true, false,\
+			nullptr, __LINE__, __TFUNCSIG__, szFormat, __VA_ARGS__)
 	#endif
 #endif
 
-// ¼­½Ä ¹®ÀÚ¿­ Áö¿ø, µğ¹ö±× ¸ğµå¿¡¼­´Â µğ¹ö±× Ãâ·ÂÃ¢¿¡µµ Ãâ·Â
-// ¸Ş½ÃÁö ¹Ú½º Ãâ·Â Áö¿ø, ¿¡·¯ ¸Ş½ÃÁö ¹Ú½º¸¸ Áö¿øÇÕ´Ï´Ù.
+// RXLOG()ì— ë©”ì‹œì§€ ë°•ìŠ¤ ê¸°ëŠ¥ì´ ì¶”ê°€ëœ í•¨ìˆ˜ì…ë‹ˆë‹¤.
+#if defined(DEBUG) || defined(_DEBUG)
+#if defined(_UNICODE) || defined(UNICODE)
+#define RXMSGBOXLOG(szFormat, ...)\
+		RX::RXLogImplW(PROJECT_MODE::PM_DEBUG, true, true, false,\
+			nullptr, __LINE__, __TFUNCSIG__, L##szFormat, __VA_ARGS__)
+#else
+#define RXMSGBOXLOG(szFormat, ...)\
+		RX::RXLogImplA(PROJECT_MODE::PM_DEBUG, true, true, false,\
+			nullptr, __LINE__, __TFUNCSIG__, szFormat, __VA_ARGS__)
+#endif
+#else
+#if defined(_UNICODE) || defined(UNICODE)
+#define RXMSGBOXLOG(szFormat, ...)\
+		RX::RXLogImplW(PROJECT_MODE::PM_RELEASE, true, true, false,\
+			nullptr, __LINE__, __TFUNCSIG__, L##szFormat, __VA_ARGS__)
+#else
+#define RXMSGBOXLOG(szFormat, ...)\
+		RX::RXLogImplA(PROJECT_MODE::PM_RELEASE, true, true, false,\
+			nullptr, __LINE__, __TFUNCSIG__, szFormat, __VA_ARGS__)
+#endif
+#endif
+
+// ì„œì‹ ë¬¸ìì—´ ì§€ì›, ë””ë²„ê·¸ ëª¨ë“œì—ì„œëŠ” ë””ë²„ê·¸ ì¶œë ¥ì°½ì—ë„ ì¶œë ¥
+// ë©”ì‹œì§€ ë°•ìŠ¤ ì¶œë ¥ ì§€ì›, ì—ëŸ¬ ë©”ì‹œì§€ ë°•ìŠ¤ë§Œ ì§€ì›í•©ë‹ˆë‹¤.
 #if defined(DEBUG) || defined(_DEBUG)
 	#if defined(_UNICODE) || defined(UNICODE)
 	#define RXERRLOG(szFormat, ...) RX::RXLogImplW(PROJECT_MODE::PM_DEBUG, true, true, true,\
-		__TFILE__, __LINE__, __TFUNSIG__, L##szFormat, __VA_ARGS__)
+		nullptr, __LINE__, __TFUNCSIG__, L##szFormat, __VA_ARGS__)
 	#else
 	#define RXERRLOG(szFormat, ...) RX::RXLogImplA(PROJECT_MODE::PM_DEBUG, true, true, true,\
-		__TFILE__, __LINE__, __TFUNSIG__, szFormat, __VA_ARGS__)
+		nullptr, __LINE__, __TFUNCSIG__, szFormat, __VA_ARGS__)
 	#endif
 #else
 	#if defined(_UNICODE) || defined(UNICODE)
 	#define RXERRLOG(szFormat, ...) RX::RXLogImplW(PROJECT_MODE::PM_RELEASE, true, true, true,\
-		__TFILE__, __LINE__, __TFUNSIG__, L##szFormat, __VA_ARGS__)
+		nullptr, __LINE__, __TFUNCSIG__, L##szFormat, __VA_ARGS__)
 	#else
 	#define RXERRLOG(szFormat, ...) RX::RXLogImplA(PROJECT_MODE::PM_RELEASE, true, true, true,\
-		__TFILE__, __LINE__, __TFUNSIG__, szFormat, __VA_ARGS__)
+		nullptr, __LINE__, __TFUNCSIG__, szFormat, __VA_ARGS__)
 	#endif
 #endif
 
-// ====================================================================================
-// DirectX °ü·Ã ¸ÅÅ©·ÎÀÔ´Ï´Ù.
-//
-#define DXCOLOR_WHITE   D3DCOLOR_ARGB(255, 255, 255, 255)
-#define DXCOLOR_BLACK   D3DCOLOR_ARGB(255,   0,   0,   0)
-#define DXCOLOR_RED     D3DCOLOR_ARGB(255, 255,   0,   0)
-#define DXCOLOR_GREEN   D3DCOLOR_ARGB(255,   0, 255,   0)
-#define DXCOLOR_BLUE    D3DCOLOR_ARGB(255,   0,   0, 255)
-#define DXCOLOR_MAGENTA D3DCOLOR_ARGB(255, 255,   0, 255)
+// CHAR ì „ìš©ì…ë‹ˆë‹¤.
+#define RXLOG_CHAR(bMessageBox, szFormat, ...)\
+		RX::RXLogImplA(PROJECT_MODE::PM_DEBUG, bMessageBox, true, false,\
+			nullptr, __LINE__, __FUNCSIG__, szFormat, __VA_ARGS__)
 
-// DirectX ¿¡·¯ ÇÚµé·¯ ¸ÅÅ©·ÎÀÔ´Ï´Ù.
-// HRESULT°ª¸¸ ³Ö¾î¾ß Á¤»ó ÀÛµ¿ÇÕ´Ï´Ù.
+#define RXERRLOG_CHAR(szFormat, ...) RX::RXLogImplA(PROJECT_MODE::PM_DEBUG, true, true, true,\
+		nullptr, __LINE__, __FUNCSIG__, szFormat, __VA_ARGS__)
+
+// WCHAR ì „ìš©ì…ë‹ˆë‹¤.
+#define RXLOG_WCHAR(bMessageBox, szFormat, ...)\
+		RX::RXLogImplW(PROJECT_MODE::PM_DEBUG, bMessageBox, true, false,\
+			nullptr, __LINE__, __WFUNCSIG__, L##szFormat, __VA_ARGS__)
+
+#define RXERRLOG_WCHAR(szFormat, ...) RX::RXLogImplW(PROJECT_MODE::PM_DEBUG, true, true, true,\
+		nullptr, __LINE__, __WFUNCSIG__, L##szFormat, __VA_ARGS__)
+
+// ====================================================================================
+// DirectX ê´€ë ¨ ë§¤í¬ë¡œì…ë‹ˆë‹¤.
+
+#define DXCOLOR_WHITE   D3DCOLOR_ARGB(255, 255, 255, 255) // í°ìƒ‰
+#define DXCOLOR_BLACK   D3DCOLOR_ARGB(255,   0,   0,   0) // ê²€ì€ìƒ‰
+#define DXCOLOR_RED     D3DCOLOR_ARGB(255, 255,   0,   0) // ë¹¨ê°„ìƒ‰
+#define DXCOLOR_GREEN   D3DCOLOR_ARGB(255,   0, 255,   0) // ì´ˆë¡ìƒ‰
+#define DXCOLOR_BLUE    D3DCOLOR_ARGB(255,   0,   0, 255) // íŒŒë€ìƒ‰
+#define DXCOLOR_MAGENTA D3DCOLOR_ARGB(255, 255,   0, 255) // ë¶„í™ìƒ‰
+#define DXCOLOR_TEAL    D3DCOLOR_ARGB(255, 64,  128, 128) // ì²­ë¡ìƒ‰
+
+// DirectX ì—ëŸ¬ í•¸ë“¤ëŸ¬ ë§¤í¬ë¡œì…ë‹ˆë‹¤.
+// HRESULTê°’ë§Œ ë„£ì–´ì•¼ ì •ìƒ ì‘ë™í•©ë‹ˆë‹¤.
 #define DXERR_HANDLER(hDXResult)\
 if (FAILED(hDXResult))\
 {\
 	DXERR_HANDLER_IMPL(hDXResult);\
 }
 
-// ÆÄÀÏ, ¶óÀÎ, ¿¡·¯ ÀÌ¸§, ¿¡·¯ ³»¿ë
+// íŒŒì¼, ë¼ì¸, ì—ëŸ¬ ì´ë¦„, ì—ëŸ¬ ë‚´ìš©
 #if defined(DEBUG) || defined(_DEBUG)
 	#if defined(_UNICODE) || defined(UNICODE)
 	#define DXERR_HANDLER_IMPL(hDXResult) RX::DXErrorHandlerImplW(hDXResult, PROJECT_MODE::PM_DEBUG,\
-				__TFILE__, __LINE__, __TFUNSIG__);
+				nullptr, __LINE__, __TFUNCSIG__);
 	#else
 	#define DXERR_HANDLER_IMPL(hDXResult) RX::DXErrorHandlerImplA(hDXResult, PROJECT_MODE::PM_DEBUG,\
-				__TFILE__, __LINE__, __TFUNSIG__);
+				nullptr, __LINE__, __TFUNCSIG__);
 	#endif
 #else
 	#if defined(_UNICODE) || defined(UNICODE)
 	#define DXERR_HANDLER_IMPL(hDXResult) RX::DXErrorHandlerImplW(hDXResult, PROJECT_MODE::PM_RELEASE,\
-				__TFILE__, __LINE__, __TFUNSIG__);
+				nullptr, __LINE__, __TFUNCSIG__);
 	#else
 	#define DXERR_HANDLER_IMPL(hDXResult) RX::DXErrorHandlerImplA(hDXResult, PROJECT_MODE::PM_RELEASE,\
-				__TFILE__, __LINE__, __TFUNSIG__);
+				nullptr, __LINE__, __TFUNCSIG__);
 	#endif
 #endif
 
 // ====================================================================================
-// ±× ¿ÜÀÇ ¸ÅÅ©·ÎÀÔ´Ï´Ù.
-//
-#if defined(_UNICODE) || defined(UNICODE)
-#define Win32LastErrorHandler Win32LastErrorHandlerImplW()
-#else
-#define Win32LastErrorHandler Win32LastErrorHandlerImplA()
-#endif
+// ê·¸ ì™¸ì˜ ë§¤í¬ë¡œì…ë‹ˆë‹¤.
 
-// ÆÄÀÏ, ¶óÀÎ, ¿¡·¯ ÀÌ¸§, ¿¡·¯ ³»¿ë
-// GetLastError()¸¦ ÀÌ¿ëÇÑ Win32 APIÀÇ ¿¡·¯ ÇÚµé·¯ÀÔ´Ï´Ù.
+// íŒŒì¼, ë¼ì¸, ì—ëŸ¬ ì´ë¦„, ì—ëŸ¬ ë‚´ìš©
+// GetLastError()ë¥¼ ì´ìš©í•œ Win32 APIì˜ ì—ëŸ¬ í•¸ë“¤ëŸ¬ì…ë‹ˆë‹¤.
 #if defined(DEBUG) || defined(_DEBUG)
 	#if defined(_UNICODE) || defined(UNICODE)
 	#define WIN32ERR_HANDLER() RX::Win32LastErrorHandlerImplW(PROJECT_MODE::PM_DEBUG,\
-				__TFILE__, __LINE__, __TFUNSIG__);
+				nullptr, __LINE__, __TFUNSIG__);
 	#else
 	#define WIN32ERR_HANDLER() RX::Win32LastErrorHandlerImplW(PROJECT_MODE::PM_DEBUG,\
-				__TFILE__, __LINE__, __TFUNSIG__);
+				nullptr, __LINE__, __TFUNSIG__);
 #endif
 #else
 	#if defined(_UNICODE) || defined(UNICODE)
 	#define WIN32ERR_HANDLER() RX::Win32LastErrorHandlerImplA(PROJECT_MODE::PM_RELEASE,\
-				__TFILE__, __LINE__, __TFUNSIG__);
+				nullptr, __LINE__, __TFUNSIG__);
 	#else
 	#define WIN32ERR_HANDLER() RX::Win32LastErrorHandlerImplA(PROJECT_MODE::PM_RELEASE,\
-				__TFILE__, __LINE__, __TFUNSIG__);
+				nullptr, __LINE__, __TFUNSIG__);
 	#endif
 #endif
+
+// ====================================================================================
+// í”¼ë‹‰ìŠ¤ ì‹±ê¸€í†¤ì…ë‹ˆë‹¤.
+// ì£½ì—ˆë‹¤ê°€ ë‹¤ì‹œ ë¶€í™œí•œë‹¤ëŠ” ì˜ë¯¸ë¡œ í”¼ë‹‰ìŠ¤ë¼ê³  í•©ë‹ˆë‹¤...
+//
+// ì¤‘ê°„ì— new(m_pInst) classTypeì€ Replacement Newì…ë‹ˆë‹¤.
+// ë©”ëª¨ë¦¬ë¥¼ ìƒˆë¡œ í• ë‹¹í•˜ì§€ ì•Šê³  ìƒì„±ìë§Œ í˜¸ì¶œí•©ë‹ˆë‹¤.
+//
+// ìƒì„±ìì™€ ì†Œë©¸ìëŠ” ì‹œì ìœ¼ë¡œ ì¸í•´ ê³ ì •ì…ë‹ˆë‹¤.
+// ë”°ë¼ì„œ ìƒì„± ì‘ì—…ì€ Init(), í•´ì œ ì‘ì—…ì€ Release() ê°™ì€ í•¨ìˆ˜ë¥¼ ë§Œë“¤ì–´ì•¼ í•©ë‹ˆë‹¤.
+#define PHOENIX_SINGLETON(classType)\
+public:\
+	static classType* Instance()\
+	{\
+		if (m_bDestroy == true)\
+		{\
+			Create();\
+			new(m_pInst) classType;\
+			std::atexit(Destroy);\
+			m_bDestroy = true;\
+		}\
+		if (m_pInst == nullptr)\
+		{\
+			Create();\
+		}\
+		return m_pInst;\
+	}\
+private:\
+	classType() = default;\
+	classType(const classType& rhs)  = delete;\
+	classType(const classType&& rhs) = delete;\
+	~classType()\
+	{\
+		m_bDestroy = true;\
+	}\
+	classType& operator=(const classType& rhs)  = delete;\
+	classType& operator=(const classType&& rhs) = delete;\
+	static void Create()\
+	{\
+		static classType inst;\
+		m_pInst = &inst;\
+	}\
+	static void Destroy()\
+	{\
+		m_pInst->~classType();\
+	}\
+	static bool m_bDestroy;\
+	static classType* m_pInst;
+
+// í”¼ë‹‰ìŠ¤ ì‹±ê¸€í†¤ì˜ ìƒì„±ì ì¬ì •ì˜ê°€ ê°€ëŠ¥í•œ ë§¤í¬ë¡œ í•¨ìˆ˜ì…ë‹ˆë‹¤.
+#define PHOENIX_SINGLETON_CTOR(classType)\
+public:\
+	static classType* Instance()\
+	{\
+		if (m_bDestroy == true)\
+		{\
+			Create();\
+			new(m_pInst) classType;\
+			std::atexit(Destroy);\
+			m_bDestroy = true;\
+		}\
+		if (m_pInst == nullptr)\
+		{\
+			Create();\
+		}\
+		return m_pInst;\
+	}\
+private:\
+	classType(const classType& rhs)  = delete;\
+	classType(const classType&& rhs) = delete;\
+	~classType()\
+	{\
+		m_bDestroy = true;\
+	}\
+	classType& operator=(const classType& rhs)  = delete;\
+	classType& operator=(const classType&& rhs) = delete;\
+	static void Create()\
+	{\
+		static classType inst;\
+		m_pInst = &inst;\
+	}\
+	static void Destroy()\
+	{\
+		m_pInst->~classType();\
+	}\
+	static bool m_bDestroy;\
+	static classType* m_pInst;
+
+// í”¼ë‹‰ìŠ¤ ì‹±ê¸€í†¤ì˜ ë©¤ë²„ë³€ìˆ˜ ì´ˆê¸°í™” ë§¤í¬ë¡œ í•¨ìˆ˜ì…ë‹ˆë‹¤.
+#define PHOENIX_SINGLETON_INIT(classType)\
+	classType* classType::m_pInst = nullptr;\
+	bool classType::m_bDestroy = false;
 
 #endif

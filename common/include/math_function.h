@@ -14,12 +14,22 @@
 
 #include "common.h"
 
+// DLL에서 DirectX9 자료형을 사용하면 아래처럼 선언해줘야 합니다.
+// 필수는 아닌데 경고를 없앨 수 있습니다.
+struct DLL_DEFINE D3DXVECTOR3;
+struct DLL_DEFINE D3DXMATRIX;
+
 namespace RX
 {
+
+	// 각도
+	DLL_DEFINE FLOAT AdjustAngle(FLOAT rAngle);
 
 	// 벡터
 	DLL_DEFINE void ZeroVector(D3DXVECTOR3* pV);
 	DLL_DEFINE void SetVector(D3DXVECTOR3* pV, FLOAT rX, FLOAT rY, FLOAT rZ);
+	DLL_DEFINE D3DXVECTOR3 CalcNormalVector(const D3DXVECTOR3& vBase,
+		const D3DXVECTOR3& v1, const D3DXVECTOR3& v2);
 
 	// 행렬
 	DLL_DEFINE void ZeroMatrix(D3DXMATRIXA16* pMat);
