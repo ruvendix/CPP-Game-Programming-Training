@@ -12,6 +12,10 @@
 #ifndef GAME_GAMEBOARD_H__
 #define GAME_GAMEBOARD_H__
 
+ // ====================================================================================
+ // 전역 상수입니다.
+const INT32 CELL_SIZE = 100;
+
 class GameBoard
 {
 public:

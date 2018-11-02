@@ -199,6 +199,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	switch (msg)
 	{
 	case WM_KEYDOWN:
+	{
+		switch (wParam)
+		{
+		case VK_ESCAPE:
+		{
+			::SendMessage(g_hMainWnd, WM_CLOSE, 0, 0); // 동기화 함수(응답 올 떄까지 대기)
+			return 0;
+		}
+		}
+	}
 	case WM_SYSKEYDOWN:
 	{
 		OnAltEnter(wParam, lParam);
@@ -284,8 +294,11 @@ void RecreateBackBuffer()
 {
 	::SelectObject(g_hBackBufferDC, g_hOldBackBufferBitmap);
 	::DeleteObject(g_hBackBufferBitmap);
+	RECT rtClient;
+	::GetClientRect(g_hMainWnd, &rtClient);
 	g_hBackBufferBitmap = ::CreateCompatibleBitmap(g_hMainDC,
-		g_pMain->getClientWidth(), g_pMain->getClientHeight());
+		rtClient.right - rtClient.left, rtClient.bottom - rtClient.top);
+	g_pMain->AdjustProgramRange(rtClient.right - rtClient.left, rtClient.bottom - rtClient.top);
 	g_hOldBackBufferBitmap =
 		static_cast<HBITMAP>(::SelectObject(g_hBackBufferDC, g_hBackBufferBitmap));
 }
